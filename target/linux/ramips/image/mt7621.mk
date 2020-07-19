@@ -682,3 +682,14 @@ define Device/zbt-wg3526-32M
 	kmod-usb3 kmod-usb-ledtrig-usbport wpad-basic
 endef
 TARGET_DEVICES += zbt-wg3526-32M
+
+define Device/zbt-wg108
+  DTS := ZBT-WG108
+  IMAGE_SIZE := $(ralink_default_fw_size_32M)
+  DEVICE_TITLE := ZBT WG108 (32MB flash)
+  DEVICE_PACKAGES := \
+	kmod-mt7603 kmod-mt76x2 kmod-usb3 kmod-sdhci-mt7620 wpad-basic \
+	block-mount e2fsprogs kmod-fs-ext4 kmod-usb-storage kmod-usb2 \
+	block-hotplug kmod-fs-ext4 kmod-fs-vfat kmod-nls-cp437 kmod-nls-iso8859-1
+endef
+TARGET_DEVICES += zbt-wg108
