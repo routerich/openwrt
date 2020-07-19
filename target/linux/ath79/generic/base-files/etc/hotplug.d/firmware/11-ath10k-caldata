@@ -10,7 +10,8 @@ board=$(board_name)
 case "$FIRMWARE" in
 "ath10k/cal-pci-0000:00:00.0.bin")
 	case $board in
-	avm,fritz1750e)
+	avm,fritz1750e|\
+	avm,fritzdvbc)
 		caldata_extract "urlader" 0x198a 0x844
 		;;
 	comfast,cf-wr650ac-v1|\
@@ -25,6 +26,8 @@ case "$FIRMWARE" in
 	ubnt,nanobeam-ac|\
 	ubnt,nanostation-ac|\
 	ubnt,nanostation-ac-loco|\
+	ubnt,powerbeam-5ac-500|\
+	ubnt,powerbeam-5ac-gen2|\
 	ubnt,unifiac-pro|\
 	yuncore,a770)
 		caldata_extract "art" 0x5000 0x844
@@ -37,6 +40,10 @@ case "$FIRMWARE" in
 	devolo,dvl1750x)
 		caldata_extract "art" 0x5000 0x844
 		ath10k_patch_mac $(macaddr_add $(mtd_get_mac_binary art 0x0) -1)
+		;;
+	dlink,dap-2695-a1)
+		caldata_extract "art" 0x5000 0x844
+		ath10k_patch_mac $(mtd_get_mac_ascii bdcfg wlanmac_a)
 		;;
 	dlink,dir-859-a1)
 		caldata_extract "art" 0x5000 0x844
@@ -116,7 +123,8 @@ case "$FIRMWARE" in
 		caldata_extract "art" 0x5000 0x844
 		ath10k_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) -2)
 		;;
-	tplink,re450-v2)
+	tplink,re450-v2|\
+	tplink,re450-v3)
 		caldata_extract "art" 0x5000 0x844
 		ath10k_patch_mac $(macaddr_add $(mtd_get_mac_binary info 0x8) +1)
 		;;

@@ -8,11 +8,17 @@
 	model = "NuCom R5010UN v2";
 	compatible = "nucom,r5010un-v2", "brcm,bcm6328";
 
+	aliases {
+		led-boot = &led_power_green;
+		led-failsafe = &led_power_green;
+		led-running = &led_power_green;
+		led-upgrade = &led_power_green;
+	};
+
 	chosen {
 		bootargs = "rootfstype=squashfs,jffs2 noinitrd console=ttyS0,115200";
 		stdout-path = "serial0:115200n8";
 	};
-
 
 	keys {
 		compatible = "gpio-keys-polled";
@@ -50,7 +56,7 @@
 			label = "R5010UNv2:green:dsl";
 			gpios = <&pinctrl 3 1>;
 		};
-		power_green {
+		led_power_green: power_green {
 			label = "R5010UNv2:green:power";
 			gpios = <&pinctrl 4 1>;
 			default-state = "on";
@@ -71,7 +77,7 @@
 };
 
 &hsspi {
-	status = "ok";
+	status = "okay";
 
 	flash@0 {
 		compatible = "jedec,spi-nor";
@@ -88,20 +94,20 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			cfe@0 {
+			partition@0 {
 				reg = <0x000000 0x010000>;
 				label = "cfe";
 				read-only;
 			};
 
-			linux@10000 {
-				reg = <0x010000 0x7e0000>;
+			partition@10000 {
+				reg = <0x010000 0xfe0000>;
 				label = "linux";
 				compatible = "brcm,bcm963xx-imagetag";
 			};
 
-			nvram@7f0000 {
-				reg = <0x7f0000 0x010000>;
+			partition@ff0000 {
+				reg = <0xff0000 0x010000>;
 				label = "nvram";
 			};
 		};
@@ -109,5 +115,5 @@
 };
 
 &uart0 {
-	status = "ok";
+	status = "okay";
 };

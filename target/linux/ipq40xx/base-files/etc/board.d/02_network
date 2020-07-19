@@ -15,8 +15,21 @@ ipq40xx_setup_interfaces()
 	8dev,habanero-dvk|\
 	8dev,jalapeno|\
 	alfa-network,ap120c-ac|\
+	engenius,emr3500|\
 	engenius,ens620ext)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
+		;;
+	aruba,ap-303|\
+	aruba,ap-365|\
+	avm,fritzrepeater-1200|\
+	dlink,dap-2610 |\
+	engenius,eap1300|\
+	engenius,emd1|\
+	meraki,mr33|\
+	netgear,ex6100v2|\
+	netgear,ex6150v2|\
+	zyxel,wre6606)
+		ucidef_set_interface_lan "eth0"
 		;;
 	aruba,ap-303h)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
@@ -46,22 +59,16 @@ ipq40xx_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0u@eth0" "1:lan" "2:lan" "3:lan" "4:lan"
 		;;
-	aruba,ap-303|\
-	avm,fritzrepeater-1200|\
-	dlink,dap-2610 |\
-	engenius,eap1300|\
-	engenius,emd1|\
-	meraki,mr33|\
-	netgear,ex6100v2|\
-	netgear,ex6150v2|\
-	zyxel,wre6606)
-		ucidef_set_interface_lan "eth0"
-		;;
 	avm,fritzrepeater-3000|\
 	compex,wpj419|\
 	compex,wpj428|\
 	engenius,eap2200)
 		ucidef_set_interface_lan "eth0 eth1"
+		;;
+	buffalo,wtr-m2133hp)
+		ucidef_set_interfaces_lan_wan "eth0" "eth1"
+		ucidef_add_switch "switch0" \
+			"0u@eth0" "2:lan:3" "3:lan:2" "4:lan:1"
 		;;
 	cellc,rtl30vw)
 		ucidef_set_interface_lan "eth0"
@@ -73,7 +80,8 @@ ipq40xx_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0u@eth0" "2:lan:3" "3:lan:2" "4:lan:1" "0u@eth1" "5:wan"
 		;;
-	glinet,gl-b1300)
+	glinet,gl-b1300 |\
+	glinet,gl-s1300)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
 		ucidef_add_switch "switch0" \
 			"0u@eth0" "3:lan" "4:lan"
@@ -128,6 +136,11 @@ ipq40xx_setup_macs()
 	engenius,emd1)
 		lan_mac=$(mtd_get_mac_ascii 0:APPSBLENV ethaddr)
 		label_mac=$lan_mac
+		;;
+	engenius,emr3500)
+		wan_mac=$(mtd_get_mac_ascii 0:APPSBLENV wanaddr)
+		lan_mac=$(mtd_get_mac_ascii 0:APPSBLENV ethaddr)
+		label_mac=$wan_mac
 		;;
 	engenius,ens620ext)
 		wan_mac=$(mtd_get_mac_ascii u-boot-env ethaddr)

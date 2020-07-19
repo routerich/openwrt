@@ -30,6 +30,21 @@ define Build/zyxel-factory
 		fi
 endef
 
+define Device/8dev_rambutan
+  SOC := qca9557
+  DEVICE_VENDOR := 8devices
+  DEVICE_MODEL := Rambutan
+  DEVICE_PACKAGES := kmod-usb2
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE := 4096k
+  KERNEL_IN_UBI := 1
+  IMAGES := factory.bin sysupgrade.tar
+  IMAGE/sysupgrade.tar := sysupgrade-tar | append-metadata
+  IMAGE/factory.bin := append-ubi
+endef
+TARGET_DEVICES += 8dev_rambutan
+
 define Device/aerohive_hiveap-121
   SOC := ar9344
   DEVICE_VENDOR := Aerohive
@@ -119,6 +134,7 @@ define Device/glinet_gl-ar750s-nor-nand
 	append-ubi | check-kernel-size $$$$(GL_UBOOT_UBI_OFFSET)
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   SUPPORTED_DEVICES += glinet,gl-ar750s-nor
+  DEFAULT := n
 endef
 TARGET_DEVICES += glinet_gl-ar750s-nor-nand
 
@@ -127,6 +143,7 @@ define Device/glinet_gl-ar750s-nor
   DEVICE_VARIANT := NOR
   BLOCKSIZE := 64k
   SUPPORTED_DEVICES += gl-ar750s glinet,gl-ar750s glinet,gl-ar750s-nor-nand
+  DEFAULT := n
 endef
 TARGET_DEVICES += glinet_gl-ar750s-nor
 
@@ -171,6 +188,16 @@ define Device/netgear_wndr4300
   $(Device/netgear_ath79_nand)
 endef
 TARGET_DEVICES += netgear_wndr4300
+
+define Device/netgear_wndr4300sw
+  SOC := ar9344
+  DEVICE_MODEL := WNDR4300SW
+  NETGEAR_KERNEL_MAGIC := 0x33373033
+  NETGEAR_BOARD_ID := WNDR4300SW
+  NETGEAR_HW_ID := 29763948+0+128+128+2x2+3x3
+  $(Device/netgear_ath79_nand)
+endef
+TARGET_DEVICES += netgear_wndr4300sw
 
 define Device/netgear_wndr4300-v2
   SOC := qca9563

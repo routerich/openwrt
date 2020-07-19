@@ -44,6 +44,10 @@ ifeq ($(PKG_VERSION),9.3.0)
   PKG_HASH:=71e197867611f6054aa1119b13a0c0abac12834765fe2d81f35ac57f84f742d1
 endif
 
+ifeq ($(PKG_VERSION),10.1.0)
+  PKG_HASH:=b6898a23844b656f1b68691c5c012036c2e694ac4b53a8918d4712ad876e7ea2
+endif
+
 PATCH_DIR=../patches/$(GCC_VERSION)
 
 BUGURL=http://bugs.openwrt.org/
@@ -104,6 +108,7 @@ GCC_CONFIGURE:= \
 		--disable-multilib \
 		--disable-libmpx \
 		--disable-nls \
+		--disable-libssp \
 		$(GRAPHITE_CONFIGURE) \
 		--with-host-libstdcxx=-lstdc++ \
 		$(SOFT_FLOAT_CONFIG_OPTION) \
@@ -115,7 +120,8 @@ GCC_CONFIGURE:= \
 		--with-mpfr=$(TOPDIR)/staging_dir/host \
 		--with-mpc=$(TOPDIR)/staging_dir/host \
 		--disable-decimal-float \
-		--with-diagnostics-color=auto-if-env
+		--with-diagnostics-color=auto-if-env \
+		--enable-__cxa_atexit
 ifneq ($(CONFIG_mips)$(CONFIG_mipsel),)
   GCC_CONFIGURE += --with-mips-plt
 endif
@@ -130,14 +136,6 @@ ifneq ($(CONFIG_GCC_DEFAULT_SSP),)
 		--enable-default-ssp
 endif
 
-ifneq ($(CONFIG_GCC_LIBSSP),)
-  GCC_CONFIGURE+= \
-		--enable-libssp
-else
-  GCC_CONFIGURE+= \
-		--disable-libssp
-endif
-
 ifneq ($(CONFIG_EXTRA_TARGET_ARCH),)
   GCC_CONFIGURE+= \
 		--enable-biarch \
@@ -148,14 +146,6 @@ ifdef CONFIG_sparc
   GCC_CONFIGURE+= \
 		--enable-targets=all \
 		--with-long-double-128
-endif
-
-ifeq ($(LIBC),uClibc)
-  GCC_CONFIGURE+= \
-		--disable-__cxa_atexit
-else
-  GCC_CONFIGURE+= \
-		--enable-__cxa_atexit
 endif
 
 ifneq ($(GCC_ARCH),)

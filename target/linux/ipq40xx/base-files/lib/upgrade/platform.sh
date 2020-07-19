@@ -60,9 +60,11 @@ platform_do_upgrade() {
 	8dev,jalapeno |\
 	aruba,ap-303 |\
 	aruba,ap-303h |\
+	aruba,ap-365 |\
 	avm,fritzbox-7530 |\
 	avm,fritzrepeater-1200 |\
 	avm,fritzrepeater-3000 |\
+	buffalo,wtr-m2133hp |\
 	cilab,meshpoint-one |\
 	engenius,eap2200 |\
 	mobipromo,cm520-79f |\

@@ -17,8 +17,9 @@ define Device/buffalo_ls421de
   KERNEL_INITRAMFS := kernel-bin | append-dtb | uImage none
   DEVICE_DTS := armada-370-buffalo-ls421de
   DEVICE_PACKAGES :=  \
-    kmod-rtc-rs5c372a kmod-hwmon-gpiofan kmod-usb3 kmod-md-raid0 \
-    kmod-md-raid1 kmod-md-mod kmod-fs-xfs mkf2fs e2fsprogs partx-utils
+    kmod-rtc-rs5c372a kmod-hwmon-gpiofan kmod-hwmon-drivetemp kmod-usb3 \
+    kmod-md-raid0 kmod-md-raid1 kmod-md-mod kmod-fs-xfs mkf2fs e2fsprogs \
+    partx-utils
 endef
 TARGET_DEVICES += buffalo_ls421de
 
@@ -50,11 +51,27 @@ define Device/globalscale_mirabox
 endef
 TARGET_DEVICES += globalscale_mirabox
 
+define Device/kobol_helios4
+  DEVICE_VENDOR := Kobol
+  DEVICE_MODEL := Helios4
+  KERNEL_INSTALL := 1
+  KERNEL := kernel-bin
+  DEVICE_PACKAGES := mkf2fs e2fsprogs partx-utils
+  IMAGES := sdcard.img.gz
+  IMAGE/sdcard.img.gz := boot-scr | boot-img-ext4 | sdcard-img-ext4 | gzip | append-metadata
+  SOC := armada-388
+  UBOOT := helios4-u-boot-spl.kwb
+  BOOT_SCRIPT := clearfog
+endef
+TARGET_DEVICES += kobol_helios4
+
 define Device/linksys
   $(Device/NAND-128K)
   DEVICE_VENDOR := Linksys
-  DEVICE_PACKAGES := kmod-mwlwifi swconfig wpad-basic
+  DEVICE_PACKAGES := kmod-mwlwifi wpad-basic
   IMAGES += factory.img
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
+	append-ubi | pad-to $$$$(PAGESIZE)
   KERNEL_SIZE := 6144k
 endef
 
@@ -65,7 +82,6 @@ define Device/linksys_wrt1200ac
   DEVICE_ALT0_MODEL := Caiman
   DEVICE_DTS := armada-385-linksys-caiman
   DEVICE_PACKAGES += mwlwifi-firmware-88w8864
-  SUPPORTED_DEVICES := armada-385-linksys-caiman linksys,caiman
 endef
 TARGET_DEVICES += linksys_wrt1200ac
 
@@ -80,11 +96,10 @@ define Device/linksys_wrt1900acs
   DEVICE_ALT1_MODEL := Shelby
   DEVICE_DTS := armada-385-linksys-shelby
   DEVICE_PACKAGES += mwlwifi-firmware-88w8864
-  SUPPORTED_DEVICES := armada-385-linksys-shelby linksys,shelby
 endef
 TARGET_DEVICES += linksys_wrt1900acs
 
-define Device/linksys_wrt1900ac
+define Device/linksys_wrt1900ac-v1
   $(call Device/linksys)
   DEVICE_MODEL := WRT1900AC
   DEVICE_VARIANT := v1
@@ -93,11 +108,10 @@ define Device/linksys_wrt1900ac
   DEVICE_DTS := armada-xp-linksys-mamba
   DEVICE_PACKAGES += mwlwifi-firmware-88w8864
   KERNEL_SIZE := 3072k
-  SUPPORTED_DEVICES := armada-xp-linksys-mamba linksys,mamba
 endef
-TARGET_DEVICES += linksys_wrt1900ac
+TARGET_DEVICES += linksys_wrt1900ac-v1
 
-define Device/linksys_wrt1900acv2
+define Device/linksys_wrt1900ac-v2
   $(call Device/linksys)
   DEVICE_MODEL := WRT1900AC
   DEVICE_VARIANT := v2
@@ -105,9 +119,8 @@ define Device/linksys_wrt1900acv2
   DEVICE_ALT0_MODEL := Cobra
   DEVICE_DTS := armada-385-linksys-cobra
   DEVICE_PACKAGES += mwlwifi-firmware-88w8864
-  SUPPORTED_DEVICES := armada-385-linksys-cobra linksys,cobra
 endef
-TARGET_DEVICES += linksys_wrt1900acv2
+TARGET_DEVICES += linksys_wrt1900ac-v2
 
 define Device/linksys_wrt3200acm
   $(call Device/linksys)
@@ -116,7 +129,6 @@ define Device/linksys_wrt3200acm
   DEVICE_ALT0_MODEL := Rango
   DEVICE_DTS := armada-385-linksys-rango
   DEVICE_PACKAGES += kmod-btmrvl kmod-mwifiex-sdio mwlwifi-firmware-88w8964
-  SUPPORTED_DEVICES := armada-385-linksys-rango linksys,rango
 endef
 TARGET_DEVICES += linksys_wrt3200acm
 
@@ -129,7 +141,6 @@ define Device/linksys_wrt32x
   DEVICE_PACKAGES += kmod-btmrvl kmod-mwifiex-sdio mwlwifi-firmware-88w8964
   KERNEL_SIZE := 3072k
   KERNEL := kernel-bin | append-dtb
-  SUPPORTED_DEVICES := armada-385-linksys-venom linksys,venom
 endef
 TARGET_DEVICES += linksys_wrt32x
 
@@ -157,6 +168,8 @@ define Device/marvell_a385-db-ap
   DEVICE_MODEL := Armada 385 Development Board AP (DB-88F6820-AP)
   DEVICE_DTS := armada-385-db-ap
   IMAGES += factory.img
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
+	append-ubi | pad-to $$$$(PAGESIZE)
   KERNEL_SIZE := 8192k
   SUPPORTED_DEVICES += armada-385-db-ap
 endef
@@ -223,11 +236,10 @@ define Device/solidrun_clearfog-pro-a1
   DEVICE_MODEL := ClearFog Pro
   KERNEL_INSTALL := 1
   KERNEL := kernel-bin
-  DEVICE_PACKAGES := mkf2fs e2fsprogs partx-utils swconfig
+  DEVICE_PACKAGES := mkf2fs e2fsprogs partx-utils
   IMAGES := sdcard.img.gz
   IMAGE/sdcard.img.gz := boot-scr | boot-img-ext4 | sdcard-img-ext4 | gzip | append-metadata
   DEVICE_DTS := armada-388-clearfog-pro armada-388-clearfog-base
-  SUPPORTED_DEVICES += armada-388-clearfog armada-388-clearfog-pro
   UBOOT := clearfog-u-boot-spl.kwb
   BOOT_SCRIPT := clearfog
 endef

@@ -8,10 +8,6 @@
 		label-mac-device = &gmac0;
 	};
 
-	chosen {
-		bootargs = "console=ttyS0,57600";
-	};
-
 	keys {
 		compatible = "gpio-keys";
 
@@ -123,7 +119,7 @@
 	 */
 	status = "disabled";
 
-	m25p80@1 {
+	flash@1 {
 		compatible = "jedec,spi-nor";
 		reg = <1>;
 		spi-max-frequency = <10000000>;

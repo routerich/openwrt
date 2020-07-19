@@ -17,10 +17,6 @@
 		label-mac-device = &gmac0;
 	};
 
-	chosen {
-		bootargs = "console=ttyS0,57600";
-	};
-
 	leds {
 		compatible = "gpio-leds";
 
@@ -65,7 +61,7 @@
 &spi0 {
 	status = "okay";
 
-	m25p80@0 {
+	flash@0 {
 		compatible = "jedec,spi-nor";
 		reg = <0>;
 		spi-max-frequency = <10000000>;
@@ -162,7 +158,7 @@
 &pcie1 {
 	wifi1: mt76@0,0 {
 		reg = <0x0000 0 0 0 0>;
-		mediatek,mtd-eeprom = <&radio 0>;
+		mediatek,mtd-eeprom = <&radio 0x0>;
 		ieee80211-freq-limit = <2400000 2500000>;
 	};
 };

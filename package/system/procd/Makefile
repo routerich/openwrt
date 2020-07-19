@@ -12,9 +12,9 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=$(PROJECT_GIT)/project/procd.git
-PKG_SOURCE_DATE:=2020-04-19
-PKG_SOURCE_VERSION:=d200b70e5d5b0b3b61e2573f1c2fa22b3fa9d63a
-PKG_MIRROR_HASH:=f56a7d8d74a9996fb83b6815446979550b7786019c97343fa5591d78e2b9c528
+PKG_SOURCE_DATE:=2020-07-17
+PKG_SOURCE_VERSION:=268126a3b159fbd488eb56ebbd19c7384f1aa8a5
+PKG_MIRROR_HASH:=77f143f600570c26f9305a744e8cad9c799c71b7873b4cbcff3151c43d796671
 CMAKE_INSTALL:=1
 
 PKG_LICENSE:=GPL-2.0
@@ -56,11 +56,26 @@ define Package/procd-ujail
   TITLE:=OpenWrt process jail helper
 endef
 
+define Package/procd-ujail-console
+  SECTION:=base
+  CATEGORY:=Base system
+  DEPENDS:=+procd-ujail +libubus +libubox
+  TITLE:=OpenWrt process jail console
+endef
+
 define Package/procd-seccomp
   SECTION:=base
   CATEGORY:=Base system
   DEPENDS:=@(arm||armeb||mips||mipsel||i386||powerpc||x86_64) @!TARGET_uml @KERNEL_SECCOMP +libubox +libblobmsg-json
   TITLE:=OpenWrt process seccomp helper + utrace
+endef
+
+define Package/uxc
+  SECTION:=base
+  CATEGORY:=Base system
+  DEPENDS:=+procd-ujail +libubus +libubox +libblobmsg-json
+  TITLE:=OpenWrt container management
+  MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 endef
 
 define Package/procd/config
@@ -110,6 +125,11 @@ define Package/procd-ujail/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/ujail $(1)/sbin/
 endef
 
+define Package/procd-ujail-console/install
+	$(INSTALL_DIR) $(1)/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/ujail-console $(1)/sbin/
+endef
+
 define Package/procd-seccomp/install
 	$(INSTALL_DIR) $(1)/sbin $(1)/lib
 	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/libpreload-seccomp.so $(1)/lib
@@ -118,6 +138,19 @@ define Package/procd-seccomp/install
 	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/libpreload-trace.so $(1)/lib
 endef
 
+define Package/uxc/conffiles
+/etc/uxc
+endef
+
+define Package/uxc/install
+	$(INSTALL_DIR) $(1)/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/uxc $(1)/sbin/
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/uxc.init $(1)/etc/init.d/uxc
+endef
+
 $(eval $(call BuildPackage,procd))
 $(eval $(call BuildPackage,procd-ujail))
+$(eval $(call BuildPackage,procd-ujail-console))
 $(eval $(call BuildPackage,procd-seccomp))
+$(eval $(call BuildPackage,uxc))
