@@ -269,15 +269,10 @@ define Build/xor-image
 endef
 
 define Build/check-size
-	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(if $(1),$(1),$(IMAGE_SIZE)))))) -ge "$$(stat -c%s $@)" ] || { \
-		echo "WARNING: Image file $@ is too big" >&2; \
-		rm -f $@; \
-	}
-endef
-
-define Build/check-kernel-size
-	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -ge "$$(stat -c%s $(IMAGE_KERNEL))" ] || { \
-		echo "WARNING: Kernel for $@ is too big > $(1)" >&2; \
+	@imagesize="$$(stat -c%s $@)"; \
+	limitsize="$$(($(subst k,* 1024,$(subst m, * 1024k,$(if $(1),$(1),$(IMAGE_SIZE))))))"; \
+	[ $$limitsize -ge $$imagesize ] || { \
+		echo "WARNING: Image file $@ is too big: $$imagesize > $$limitsize" >&2; \
 		rm -f $@; \
 	}
 endef
@@ -387,15 +382,20 @@ endef
 compat_version=$(if $(DEVICE_COMPAT_VERSION),$(DEVICE_COMPAT_VERSION),1.0)
 json_quote=$(subst ','\'',$(subst ",\",$(1)))
 #")')
+
+legacy_supported_message=$(SUPPORTED_DEVICES) - Image version mismatch: image $(compat_version), \
+	device 1.0. Please wipe config during upgrade (force required) or reinstall. \
+	$(if $(DEVICE_COMPAT_MESSAGE),Reason: $(DEVICE_COMPAT_MESSAGE),Please check documentation ...)
+
 metadata_devices=$(if $(1),$(subst "$(space)","$(comma)",$(strip $(foreach v,$(1),"$(call json_quote,$(v))"))))
 metadata_json = \
 	'{ $(if $(IMAGE_METADATA),$(IMAGE_METADATA)$(comma)) \
 		"metadata_version": "1.1", \
 		"compat_version": "$(call json_quote,$(compat_version))", \
 		$(if $(DEVICE_COMPAT_MESSAGE),"compat_message": "$(call json_quote,$(DEVICE_COMPAT_MESSAGE))"$(comma)) \
-		$(if $(filter-out 1.0,$(compat_version)),"new_supported_devices":[$(call metadata_devices,$(SUPPORTED_DEVICES))]$(comma)) \
-		$(if $(filter-out 1.0,$(compat_version)),"supported_devices": \
-			["$(call json_quote,Image version $(compat_version) incompatible to device: $(if $(DEVICE_COMPAT_MESSAGE),$(DEVICE_COMPAT_MESSAGE),Please check documentation ...))"]$(comma)) \
+		$(if $(filter-out 1.0,$(compat_version)),"new_supported_devices": \
+			[$(call metadata_devices,$(SUPPORTED_DEVICES))]$(comma) \
+			"supported_devices": ["$(call json_quote,$(legacy_supported_message))"]$(comma)) \
 		$(if $(filter 1.0,$(compat_version)),"supported_devices":[$(call metadata_devices,$(SUPPORTED_DEVICES))]$(comma)) \
 		"version": { \
 			"dist": "$(call json_quote,$(VERSION_DIST))", \
