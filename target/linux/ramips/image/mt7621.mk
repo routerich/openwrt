@@ -1336,6 +1336,8 @@ endef
 TARGET_DEVICES += zyxel_wap6805
 
 define Device/zbt-wg108
+  $(Device/dsa-migration)
+  $(Device/uimage-lzma-loader)
   DTS := ZBT-WG108
   IMAGE_SIZE := 32448k
   SUPPORTED_DEVICES += zbt-wg108
