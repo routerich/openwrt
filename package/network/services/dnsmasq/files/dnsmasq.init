@@ -48,6 +48,7 @@ dnsmasq_ignore_opt() {
 				echo "dnsmasq: \"$opt\" requested, but dnssec support is not available" >&2
 				exit 1
 			fi
+			return 1
 			;;
 		tftp-*)
 			[ -z "$dnsmasq_has_tftp" ] ;;
@@ -904,6 +905,7 @@ dnsmasq_start()
 	append_parm "$cfg" "min_cache_ttl" "--min-cache-ttl"
 	append_parm "$cfg" "max_cache_ttl" "--max-cache-ttl"
 	append_parm "$cfg" "pxe_prompt" "--pxe-prompt"
+	append_parm "$cfg" "tftp_unique_root" "--tftp-unique-root"
 	config_list_foreach "$cfg" "pxe_service" append_pxe_service
 	config_get DOMAIN "$cfg" domain
 
@@ -1064,6 +1066,7 @@ dnsmasq_start()
 			echo "search $DOMAIN" >> /tmp/resolv.conf
 		}
 		DNS_SERVERS="$DNS_SERVERS 127.0.0.1"
+		[ -e /proc/sys/net/ipv6 ] && DNS_SERVERS="$DNS_SERVERS ::1"
 		for DNS_SERVER in $DNS_SERVERS ; do
 			echo "nameserver $DNS_SERVER" >> /tmp/resolv.conf
 		done

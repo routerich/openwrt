@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
-/dts-v1/;
+// SPDX-License-Identifier: GPL-2.0-only
 
 #include "ar9342_ubnt_wa.dtsi"
 
@@ -33,4 +32,10 @@
 		rxd-delay = <3>;
 		rxdv-delay = <3>;
 	};
+};
+
+&wmac {
+	status = "okay";
+
+	mtd-cal-data = <&art 0x1000>;
 };

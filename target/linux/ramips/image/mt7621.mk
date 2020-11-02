@@ -107,8 +107,7 @@ endef
 
 define Device/dsa-migration
   DEVICE_COMPAT_VERSION := 1.1
-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA \
-	(early adopters with DSA already set up may just force-flash keeping existing config)
+  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
 endef
 
 define Device/adslr_g7
@@ -275,6 +274,13 @@ define Device/dlink_dir-1960-a1
 endef
 TARGET_DEVICES += dlink_dir-1960-a1
 
+define Device/dlink_dir-2660-a1
+  $(Device/dlink_dir-xx60-a1)
+  DEVICE_MODEL := DIR-2660
+  DEVICE_VARIANT := A1
+endef
+TARGET_DEVICES += dlink_dir-2660-a1
+
 define Device/dlink_dir-860l-b1
   $(Device/dsa-migration)
   $(Device/seama)
@@ -327,7 +333,7 @@ TARGET_DEVICES += d-team_newifi-d2
 
 define Device/d-team_pbr-m1
   $(Device/dsa-migration)
-  IMAGE_SIZE := 16064k
+  IMAGE_SIZE := 32448k
   DEVICE_VENDOR := PandoraBox
   DEVICE_MODEL := PBR-M1
   DEVICE_PACKAGES := kmod-ata-ahci kmod-mt7603 kmod-mt76x2 kmod-sdhci-mt7620 \
@@ -649,6 +655,15 @@ define Device/linksys_ea7300-v1
 endef
 TARGET_DEVICES += linksys_ea7300-v1
 
+define Device/linksys_ea7300-v2
+  $(Device/linksys_ea7xxx)
+  DEVICE_MODEL := EA7300
+  DEVICE_VARIANT := v2
+  LINKSYS_HWNAME := EA7300v2
+  DEVICE_PACKAGES += kmod-mt7603
+endef
+TARGET_DEVICES += linksys_ea7300-v2
+
 define Device/linksys_ea7500-v2
   $(Device/linksys_ea7xxx)
   DEVICE_MODEL := EA7500
@@ -693,8 +708,8 @@ define Device/MikroTik
   BLOCKSIZE := 64k
   IMAGE_SIZE := 16128k
   DEVICE_PACKAGES := kmod-usb3
-  LOADER_TYPE := elf
-  KERNEL := $(KERNEL_DTB) | loader-kernel
+  KERNEL_NAME := vmlinuz
+  KERNEL := kernel-bin | append-dtb-elf
   IMAGE/sysupgrade.bin := append-kernel | kernel2minor -s 1024 | \
 	pad-to $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | append-metadata | \
 	check-size
@@ -1000,6 +1015,16 @@ define Device/totolink_a7000r
 endef
 TARGET_DEVICES += totolink_a7000r
 
+define Device/totolink_x5000r
+  $(Device/dsa-migration)
+  IMAGE_SIZE := 16064k
+  UIMAGE_NAME := C8343R-9999
+  DEVICE_VENDOR := TOTOLINK
+  DEVICE_MODEL := X5000R
+  DEVICE_PACKAGES := kmod-mt7915e
+endef
+TARGET_DEVICES += totolink_x5000r
+
 define Device/tplink_re350-v1
   $(Device/dsa-migration)
   $(Device/tplink-safeloader)
@@ -1073,6 +1098,7 @@ TARGET_DEVICES += ubnt_unifi-nanohd
 
 define Device/unielec_u7621-06-16m
   $(Device/dsa-migration)
+  $(Device/uimage-lzma-loader)
   IMAGE_SIZE := 16064k
   DEVICE_VENDOR := UniElec
   DEVICE_MODEL := U7621-06
@@ -1084,6 +1110,7 @@ TARGET_DEVICES += unielec_u7621-06-16m
 
 define Device/unielec_u7621-06-64m
   $(Device/dsa-migration)
+  $(Device/uimage-lzma-loader)
   IMAGE_SIZE := 65216k
   DEVICE_VENDOR := UniElec
   DEVICE_MODEL := U7621-06
