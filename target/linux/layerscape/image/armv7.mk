@@ -1,9 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
 #
 # Copyright 2018-2020 NXP
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
 
 define Device/Default
   PROFILES := Default
@@ -15,7 +12,6 @@ define Device/Default
   KERNEL_LOADADDR := 0x80008000
   KERNEL_ENTRY_POINT := 0x80008000
   DEVICE_DTS = $(lastword $(subst _, ,$(1)))
-  SUPPORTED_DEVICES = $(subst _,$(comma),$(1))
   IMAGE_SIZE := 64m
   IMAGE/sysupgrade.bin = \
     ls-append-dtb $$(DEVICE_DTS) | pad-to 1M | \

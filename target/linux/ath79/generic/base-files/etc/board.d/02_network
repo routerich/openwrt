@@ -27,17 +27,31 @@ ath79_setup_interfaces()
 	devolo,dvl1750x|\
 	dlink,dap-1330-a1|\
 	dlink,dap-1365-a1|\
+	dlink,dap-2230-a1|\
+	dlink,dap-2660-a1|\
+	dlink,dap-2680-a1|\
+	dlink,dap-3320-a1|\
 	dlink,dir-505|\
-	engenius,eap300-v2|\
+	engenius,eap1200h|\
+	engenius,eap600|\
+	engenius,ecb1200|\
 	engenius,ecb1750|\
+	engenius,ecb600|\
 	enterasys,ws-ap3705i|\
 	glinet,gl-ar300m-lite|\
+	glinet,gl-usb150|\
 	hak5,wifi-pineapple-nano|\
 	meraki,mr16|\
 	netgear,ex6400|\
 	netgear,ex7300|\
 	ocedo,koala|\
 	ocedo,raccoon|\
+	openmesh,mr600-v1|\
+	openmesh,mr600-v2|\
+	openmesh,mr900-v1|\
+	openmesh,mr900-v2|\
+	openmesh,mr1750-v1|\
+	openmesh,mr1750-v2|\
 	pcs,cap324|\
 	pisen,ts-d084|\
 	pisen,wmb001n|\
@@ -58,6 +72,7 @@ ath79_setup_interfaces()
 	tplink,re450-v2|\
 	tplink,re450-v3|\
 	tplink,tl-wr902ac-v1|\
+	ubnt,bullet-ac|\
 	ubnt,bullet-m-ar7240|\
 	ubnt,bullet-m-ar7241|\
 	ubnt,bullet-m-xw|\
@@ -81,6 +96,10 @@ ath79_setup_interfaces()
 	winchannel,wb2000)
 		ucidef_set_interface_lan "eth0"
 		;;
+	airtight,c-75)
+		ucidef_add_switch "switch0" \
+			"0@eth0" "2:wan" "3:lan" "6@eth1"
+		;;
 	alfa-network,ap121fe)
 		ucidef_set_interface_lan "eth0 usb0"
 		;;
@@ -88,7 +107,10 @@ ath79_setup_interfaces()
 	alfa-network,n5q|\
 	devolo,dvl1200e|\
 	devolo,dvl1750e|\
-	ocedo,ursus)
+	engenius,enstationac-v1|\
+	engenius,ews511ap|\
+	ocedo,ursus|\
+	ubnt,unifi-ap-outdoor-plus)
 		ucidef_set_interface_lan "eth0 eth1"
 		;;
 	avm,fritz4020|\
@@ -101,6 +123,7 @@ ath79_setup_interfaces()
 			"0@eth0" "1:lan:1" "2:lan:4" "3:lan:3" "4:lan:2"
 		;;
 	belkin,f9j1108-v2|\
+	belkin,f9k1115-v2|\
 	tplink,archer-c5-v1|\
 	tplink,archer-c7-v1|\
 	tplink,archer-c7-v2|\
@@ -141,6 +164,10 @@ ath79_setup_interfaces()
 	comfast,cf-e120a-v3|\
 	comfast,cf-e314n-v2|\
 	compex,wpj531-16m|\
+	openmesh,om2p-v4|\
+	openmesh,om2p-hs-v4|\
+	plasmacloud,pa300|\
+	plasmacloud,pa300e|\
 	tplink,cpe210-v1|\
 	tplink,cpe220-v2|\
 	tplink,cpe220-v3|\
@@ -174,7 +201,12 @@ ath79_setup_interfaces()
 			"0@eth0" "2:wan" "3:lan" "4:lan"
 		;;
 	dlink,dap-2695-a1)
-		ucidef_add_switch "switch0" "0@eth0" "2:lan" "3:wan" "6@eth1"
+		ucidef_add_switch "switch0" \
+			"0@eth0" "2:lan" "3:wan" "6@eth1"
+		;;
+	dlink,dap-3662-a1)
+		ucidef_add_switch "switch0" \
+			"0@eth0" "1:lan:2" "2:lan:1" "6@eth1"
 		;;
 	dlink,dch-g020-a1)
 		ucidef_add_switch "switch0" \
@@ -208,18 +240,14 @@ ath79_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0@eth0" "1:wan" "2:lan:3" "3:lan:2"
 		;;
-	engenius,enh202-v1)
-		ucidef_set_interface_wan "eth0"
-		ucidef_add_switch "switch0" \
-			"0@eth1" "4:lan:1"
-		;;
-	engenius,ens202ext-v1)
-		ucidef_set_interface_wan "eth1"
+	engenius,eap300-v2)
 		ucidef_add_switch "switch0" \
 			"0@eth0" "1:lan"
 		;;
-	engenius,ews511ap)
-		ucidef_set_interface_lan "eth0 eth1" "dhcp"
+	engenius,ens202ext-v1)
+		ucidef_set_interface_lan "eth1"
+		ucidef_add_switch "switch0" \
+			"0@eth0" "1:lan"
 		;;
 	etactica,eg200)
 		ucidef_set_interface_lan "eth0" "dhcp"
@@ -243,6 +271,11 @@ ath79_setup_interfaces()
 	librerouter,librerouter-v1)
 		ucidef_add_switch "switch0" \
 			"0@eth0" "5:wan" "6@eth1" "4:lan"
+		;;
+	meraki,mr12)
+		ucidef_set_interface_lan "eth0"
+		ucidef_add_switch "switch0" \
+			"0@eth1" "1:lan"
 		;;
 	mercury,mw4530r-v1|\
 	tplink,archer-a7-v5|\
@@ -366,6 +399,10 @@ ath79_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"1:lan" "2:lan" "3:lan" "4:lan" "0:wan" "9@eth0"
 		;;
+	ubnt,aircube-ac)
+		ucidef_add_switch "switch0" \
+			"0@eth0" "2:lan:1" "3:lan:2" "5:lan:3" "4:wan"
+		;;
 	ubnt,aircube-isp)
 		ucidef_set_interface_wan "eth1"
 		ucidef_add_switch "switch0" \
@@ -462,7 +499,15 @@ ath79_setup_macs()
 		lan_mac=$(mtd_get_mac_text "mp" 0x1)
 		label_mac=$lan_mac
 		;;
-	dlink,dap-2695-a1)
+	dlink,dap-2230-a1|\
+	dlink,dap-2660-a1|\
+	dlink,dap-2680-a1|\
+	dlink,dap-3320-a1)
+		lan_mac=$(mtd_get_mac_ascii bdcfg "lanmac")
+		label_mac=$lan_mac
+		;;
+	dlink,dap-2695-a1|\
+	dlink,dap-3662-a1)
 		label_mac=$(mtd_get_mac_ascii bdcfg "wlanmac")
 		;;
 	dlink,dir-825-b1)
@@ -495,22 +540,10 @@ ath79_setup_macs()
 	elecom,wrc-300ghbk2-i)
 		wan_mac=$(macaddr_add "$(mtd_get_mac_binary art 0x1002)" -2)
 		;;
+	engenius,ecb1200|\
 	engenius,ecb1750)
 		lan_mac=$(mtd_get_mac_ascii u-boot-env ethaddr)
-		label_mac=$(mtd_get_mac_ascii u-boot-env athaddr)
-		;;
-	engenius,enh202-v1|\
-	ubnt,airrouter|\
-	ubnt,bullet-m-ar7240|\
-	ubnt,bullet-m-ar7241|\
-	ubnt,nanobridge-m|\
-	ubnt,nanostation-loco-m|\
-	ubnt,nanostation-m|\
-	ubnt,picostation-m|\
-	ubnt,powerbridge-m|\
-	ubnt,rocket-m|\
-	ubnt,unifi)
-		label_mac=$(cat /sys/class/ieee80211/phy0/macaddress)
+		label_mac=$lan_mac
 		;;
 	engenius,epg5000)
 		lan_mac=$(mtd_get_mac_ascii u-boot-env ethaddr)
@@ -591,6 +624,18 @@ ath79_setup_macs()
 		lan_mac=$(mtd_get_mac_text mac 0x4)
 		wan_mac=$(mtd_get_mac_text mac 0x18)
 		label_mac=$wan_mac
+		;;
+	ubnt,airrouter|\
+	ubnt,bullet-m-ar7240|\
+	ubnt,bullet-m-ar7241|\
+	ubnt,nanobridge-m|\
+	ubnt,nanostation-loco-m|\
+	ubnt,nanostation-m|\
+	ubnt,picostation-m|\
+	ubnt,powerbridge-m|\
+	ubnt,rocket-m|\
+	ubnt,unifi)
+		label_mac=$(cat /sys/class/ieee80211/phy0/macaddress)
 		;;
 	ubnt,litebeam-ac-gen2|\
 	ubnt,nanobeam-ac-gen2|\
