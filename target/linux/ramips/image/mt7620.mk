@@ -9,9 +9,9 @@ DEVICE_VARS += DLINK_ROM_ID DLINK_FAMILY_MEMBER DLINK_FIRMWARE_SIZE DLINK_IMAGE_
 define Build/elecom-header
 	cp $@ $(KDIR)/v_0.0.0.bin
 	( \
-		mkhash md5 $(KDIR)/v_0.0.0.bin && \
+		$(MKHASH) md5 $(KDIR)/v_0.0.0.bin && \
 		echo 458 \
-	) | mkhash md5 > $(KDIR)/v_0.0.0.md5
+	) | $(MKHASH) md5 > $(KDIR)/v_0.0.0.md5
 	$(STAGING_DIR_HOST)/bin/tar -c \
 		$(if $(SOURCE_DATE_EPOCH),--mtime=@$(SOURCE_DATE_EPOCH)) \
 		--owner=0 --group=0 -f $@ -C $(KDIR) v_0.0.0.bin v_0.0.0.md5
@@ -33,6 +33,7 @@ define Device/alfa-network_ac1200rm
   DEVICE_VENDOR := ALFA Network
   DEVICE_MODEL := AC1200RM
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci uboot-envtools
+  SUPPORTED_DEVICES += ac1200rm
 endef
 TARGET_DEVICES += alfa-network_ac1200rm
 
@@ -43,6 +44,7 @@ define Device/alfa-network_r36m-e4g
   DEVICE_MODEL := R36M-E4G
   DEVICE_PACKAGES := kmod-i2c-ralink kmod-usb2 kmod-usb-ohci uboot-envtools \
 	uqmi
+  SUPPORTED_DEVICES += r36m-e4g
 endef
 TARGET_DEVICES += alfa-network_r36m-e4g
 
@@ -53,16 +55,19 @@ define Device/alfa-network_tube-e4g
   DEVICE_MODEL := Tube-E4G
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci uboot-envtools uqmi -iwinfo \
 	-kmod-rt2800-soc -wpad-basic-wolfssl
+  SUPPORTED_DEVICES += tube-e4g
 endef
 TARGET_DEVICES += alfa-network_tube-e4g
 
 define Device/amit_jboot
   DLINK_IMAGE_OFFSET := 0x10000
   KERNEL := $(KERNEL_DTB)
+  KERNEL_SIZE := 2048k
   IMAGES += factory.bin
   IMAGE/sysupgrade.bin := mkdlinkfw | pad-rootfs | append-metadata
   IMAGE/factory.bin := mkdlinkfw | pad-rootfs | mkdlinkfw-factory
   DEVICE_PACKAGES := jboot-tools kmod-usb2 kmod-usb-ohci
+  DEFAULT := n
 endef
 
 define Device/asus_rp-n53
@@ -322,7 +327,7 @@ define Device/edimax_br-6478ac-v2
   IMAGE_SIZE := 7744k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | \
 	edimax-header -s CSYS -m RN68 -f 0x70000 -S 0x01100000 | pad-rootfs | \
-	append-metadata | check-size
+	check-size | append-metadata
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci \
 	kmod-usb-ledtrig-usbport
 endef
@@ -336,7 +341,7 @@ define Device/edimax_ew-7476rpc
   IMAGE_SIZE := 7744k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | \
 	edimax-header -s CSYS -m RN79 -f 0x70000 -S 0x01100000 | pad-rootfs | \
-	append-metadata | check-size
+	check-size | append-metadata
   DEVICE_PACKAGES := kmod-mt76x2 kmod-phy-realtek
 endef
 TARGET_DEVICES += edimax_ew-7476rpc
@@ -349,7 +354,7 @@ define Device/edimax_ew-7478ac
   IMAGE_SIZE := 7744k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | \
 	edimax-header -s CSYS -m RN70 -f 0x70000 -S 0x01100000 | pad-rootfs | \
-	append-metadata | check-size
+	check-size | append-metadata
   DEVICE_PACKAGES := kmod-mt76x2 kmod-phy-realtek
 endef
 TARGET_DEVICES += edimax_ew-7478ac
@@ -362,7 +367,7 @@ define Device/edimax_ew-7478apc
   IMAGE_SIZE := 7744k
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | \
 	edimax-header -s CSYS -m RN75 -f 0x70000 -S 0x01100000 | pad-rootfs | \
-	append-metadata | check-size
+	check-size | append-metadata
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci \
 	kmod-usb-ledtrig-usbport
 endef
@@ -402,7 +407,7 @@ define Device/fon_fon2601
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci
   KERNEL_INITRAMFS := $$(KERNEL) | uimage-padhdr
   IMAGE/sysupgrade.bin := append-kernel | append-rootfs | uimage-padhdr | \
-	pad-rootfs | append-metadata | check-size
+	pad-rootfs | check-size | append-metadata
 endef
 TARGET_DEVICES += fon_fon2601
 
@@ -442,13 +447,13 @@ define Device/head-weblink_hdrm200
   DEVICE_VENDOR := Head Weblink
   DEVICE_MODEL := HDRM2000
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620 \
-	uqmi kmod-usb-serial kmod-usb-serial-option
+	uqmi kmod-usb-serial-option
 endef
 TARGET_DEVICES += head-weblink_hdrm200
 
 define Device/hiwifi_hc5661
   SOC := mt7620a
-  IMAGE_SIZE := 15872k
+  IMAGE_SIZE := 15808k
   DEVICE_VENDOR := HiWiFi
   DEVICE_MODEL := HC5661
   DEVICE_PACKAGES := kmod-sdhci-mt7620
@@ -458,7 +463,7 @@ TARGET_DEVICES += hiwifi_hc5661
 
 define Device/hiwifi_hc5761
   SOC := mt7620a
-  IMAGE_SIZE := 15872k
+  IMAGE_SIZE := 15808k
   DEVICE_VENDOR := HiWiFi
   DEVICE_MODEL := HC5761
   DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620 \
@@ -469,7 +474,7 @@ TARGET_DEVICES += hiwifi_hc5761
 
 define Device/hiwifi_hc5861
   SOC := mt7620a
-  IMAGE_SIZE := 15872k
+  IMAGE_SIZE := 15808k
   DEVICE_VENDOR := HiWiFi
   DEVICE_MODEL := HC5861
   DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620 \
@@ -981,6 +986,7 @@ define Device/tplink_archer-c20-v1
   TPLINK_HWID := 0xc2000001
   TPLINK_HWREV := 0x44
   TPLINK_HWREVADD := 0x1
+  IMAGES := sysupgrade.bin
   DEVICE_MODEL := Archer C20
   DEVICE_VARIANT := v1
   DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-ohci \
@@ -1030,7 +1036,7 @@ define Device/tplink_archer-mr200
   TPLINK_HWREV := 0x4a
   IMAGES := sysupgrade.bin
   DEVICE_PACKAGES := kmod-mt76x0e kmod-usb2 kmod-usb-net-rndis \
-	kmod-usb-serial kmod-usb-serial-option adb-enablemodem
+	kmod-usb-serial-option adb-enablemodem
   DEVICE_MODEL := Archer MR200
   SUPPORTED_DEVICES += mr200
 endef
@@ -1088,6 +1094,15 @@ define Device/wavlink_wl-wn530hg4
 endef
 TARGET_DEVICES += wavlink_wl-wn530hg4
 
+define Device/wavlink_wl-wn579x3
+  SOC := mt7620a
+  IMAGE_SIZE := 7744k
+  DEVICE_VENDOR := Wavlink
+  DEVICE_MODEL := WL-WN579X3
+  DEVICE_PACKAGES := kmod-mt76x2 kmod-phy-realtek
+endef
+TARGET_DEVICES += wavlink_wl-wn579x3
+
 define Device/wrtnode_wrtnode
   SOC := mt7620n
   IMAGE_SIZE := 16064k
@@ -1108,16 +1123,26 @@ define Device/xiaomi_miwifi-mini
 endef
 TARGET_DEVICES += xiaomi_miwifi-mini
 
-define Device/youku_yk1
+define Device/youku_yk-l1
   SOC := mt7620a
   IMAGE_SIZE := 32448k
-  DEVICE_VENDOR := YOUKU
-  DEVICE_MODEL := YK1
+  DEVICE_VENDOR := Youku
+  DEVICE_MODEL := YK-L1
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620 \
 	kmod-usb-ledtrig-usbport
-  SUPPORTED_DEVICES += youku-yk1
+  SUPPORTED_DEVICES += youku-yk1 youku,yk1
 endef
-TARGET_DEVICES += youku_yk1
+TARGET_DEVICES += youku_yk-l1
+
+define Device/youku_yk-l1c
+  SOC := mt7620a
+  IMAGE_SIZE := 16064k
+  DEVICE_VENDOR := Youku
+  DEVICE_MODEL := YK-L1c
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620 \
+	kmod-usb-ledtrig-usbport
+endef
+TARGET_DEVICES += youku_yk-l1c
 
 define Device/yukai_bocco
   SOC := mt7620a
@@ -1217,7 +1242,7 @@ define Device/zbtlink_zbt-we826-e
   DEVICE_VENDOR := Zbtlink
   DEVICE_MODEL := ZBT-WE826-E
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-sdhci-mt7620 uqmi \
-	kmod-usb-serial kmod-usb-serial-option
+	kmod-usb-serial-option
 endef
 TARGET_DEVICES += zbtlink_zbt-we826-e
 

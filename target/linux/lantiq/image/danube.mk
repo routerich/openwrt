@@ -188,13 +188,14 @@ define Device/bt_homehub-v2b
   DEVICE_VARIANT := Type B
   BOARD_NAME := BTHOMEHUBV2B
   SOC := danube
+  KERNEL_SIZE := 2048k
   DEVICE_PACKAGES := kmod-usb-dwc2 \
 	kmod-ltq-adsl-danube-mei kmod-ltq-adsl-danube \
 	kmod-ltq-adsl-danube-fw-a kmod-ltq-atm-danube \
-	kmod-ltq-deu-danube \
 	ltq-adsl-app ppp-mod-pppoa \
 	kmod-ath9k kmod-owl-loader wpad-basic-wolfssl
   SUPPORTED_DEVICES += BTHOMEHUBV2B
+  DEFAULT := n
 endef
 TARGET_DEVICES += bt_homehub-v2b
 

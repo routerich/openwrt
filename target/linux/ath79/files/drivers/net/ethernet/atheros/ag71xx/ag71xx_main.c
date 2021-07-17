@@ -602,6 +602,11 @@ static void ag71xx_sgmii_serdes_init_qca956x(struct device_node *np)
 		goto err_iomap;
 	}
 
+	t = __raw_readl(gmac_base + QCA956X_GMAC_REG_SGMII_CONFIG);
+	t &= ~(QCA956X_SGMII_CONFIG_MODE_CTRL_MASK << QCA956X_SGMII_CONFIG_MODE_CTRL_SHIFT);
+	t |= QCA956X_SGMII_CONFIG_MODE_CTRL_SGMII_MAC;
+	__raw_writel(t, gmac_base + QCA956X_GMAC_REG_SGMII_CONFIG);
+
 	pr_debug("%pOF: fixup SERDES calibration to value %i\n",
 		np_dev, serdes_cal);
 	t = __raw_readl(gmac_base + QCA956X_GMAC_REG_SGMII_SERDES);
@@ -936,7 +941,7 @@ __ag71xx_link_adjust(struct ag71xx *ag, bool update)
 		 * The wr, rr functions cannot be used since this hidden register
 		 * is outside of the normal ag71xx register block.
 		 */
-		void __iomem *dam = ioremap_nocache(0xb90001bc, 0x4);
+		void __iomem *dam = ioremap(0xb90001bc, 0x4);
 		if (dam) {
 			__raw_writel(__raw_readl(dam) & ~BIT(27), dam);
 			(void)__raw_readl(dam);
@@ -1193,7 +1198,11 @@ static void ag71xx_oom_timer_handler(struct timer_list *t)
 	napi_schedule(&ag->napi);
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,0)
+static void ag71xx_tx_timeout(struct net_device *dev, unsigned int txqueue)
+#else
 static void ag71xx_tx_timeout(struct net_device *dev)
+#endif
 {
 	struct ag71xx *ag = netdev_priv(dev);
 
@@ -1579,14 +1588,14 @@ static int ag71xx_probe(struct platform_device *pdev)
 		ag->pllregmap = NULL;
 	}
 
-	ag->mac_base = devm_ioremap_nocache(&pdev->dev, res->start,
-					    res->end - res->start + 1);
+	ag->mac_base = devm_ioremap(&pdev->dev, res->start,
+				    res->end - res->start + 1);
 	if (!ag->mac_base)
 		return -ENOMEM;
 
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
 	if (res) {
-		ag->mii_base = devm_ioremap_nocache(&pdev->dev, res->start,
+		ag->mii_base = devm_ioremap(&pdev->dev, res->start,
 					    res->end - res->start + 1);
 		if (!ag->mii_base)
 			return -ENOMEM;
@@ -1667,8 +1676,13 @@ static int ag71xx_probe(struct platform_device *pdev)
 		memcpy(dev->dev_addr, mac_addr, ETH_ALEN);
 	}
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,10,0)
+	err = of_get_phy_mode(np, &ag->phy_if_mode);
+	if (err < 0) {
+#else
 	ag->phy_if_mode = of_get_phy_mode(np);
 	if (ag->phy_if_mode < 0) {
+#endif
 		dev_err(&pdev->dev, "missing phy-mode property in DT\n");
 		return ag->phy_if_mode;
 	}

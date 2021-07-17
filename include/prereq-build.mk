@@ -25,25 +25,25 @@ $(eval $(call TestHostCommand,proper-umask, \
 
 ifndef IB
 $(eval $(call SetupHostCommand,gcc, \
-	Please install the GNU C Compiler (gcc) 4.8 or later, \
-	$(CC) -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|10\.?)', \
-	gcc -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|10\.?)', \
+	Please install the GNU C Compiler (gcc) 6 or later, \
+	$(CC) -dumpversion | grep -E '^([6-9]\.?|1[0-9]\.?)', \
+	gcc -dumpversion | grep -E '^([6-9]\.?|1[0-9]\.?)', \
 	gcc --version | grep -E 'Apple.(LLVM|clang)' ))
 
 $(eval $(call TestHostCommand,working-gcc, \
-	\nPlease reinstall the GNU C Compiler (4.8 or later) - \
+	Please reinstall the GNU C Compiler (6 or later) - \
 	it appears to be broken, \
 	echo 'int main(int argc, char **argv) { return 0; }' | \
 		gcc -x c -o $(TMP_DIR)/a.out -))
 
 $(eval $(call SetupHostCommand,g++, \
-	Please install the GNU C++ Compiler (g++) 4.8 or later, \
-	$(CXX) -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|10\.?)', \
-	g++ -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|10\.?)', \
+	Please install the GNU C++ Compiler (g++) 6 or later, \
+	$(CXX) -dumpversion | grep -E '^([6-9]\.?|1[0-9]\.?)', \
+	g++ -dumpversion | grep -E '^([6-9]\.?|1[0-9]\.?)', \
 	g++ --version | grep -E 'Apple.(LLVM|clang)' ))
 
 $(eval $(call TestHostCommand,working-g++, \
-	\nPlease reinstall the GNU C++ Compiler (4.8 or later) - \
+	Please reinstall the GNU C++ Compiler (6 or later) - \
 	it appears to be broken, \
 	echo 'int main(int argc, char **argv) { return 0; }' | \
 		g++ -x c++ -o $(TMP_DIR)/a.out - -lstdc++ && \
@@ -65,10 +65,21 @@ $(eval $(call TestHostCommand,perl-data-dumper, \
 	Please install the Perl Data::Dumper module, \
 	perl -MData::Dumper -e 1))
 
+$(eval $(call TestHostCommand,perl-findbin, \
+	Please install the Perl FindBin module, \
+	perl -MFindBin -e 1))
+
+$(eval $(call TestHostCommand,perl-file-copy, \
+	Please install the Perl File::Copy module, \
+	perl -MFile::Copy -e 1))
+
+$(eval $(call TestHostCommand,perl-file-compare, \
+	Please install the Perl File::Compare module, \
+	perl -MFile::Compare -e 1))
+
 $(eval $(call TestHostCommand,perl-thread-queue, \
 	Please install the Perl Thread::Queue module, \
 	perl -MThread::Queue -e 1))
-
 
 $(eval $(call SetupHostCommand,tar,Please install GNU 'tar', \
 	gtar --version 2>&1 | grep GNU, \
@@ -91,9 +102,9 @@ $(eval $(call SetupHostCommand,patch,Please install GNU 'patch', \
 	gpatch --version 2>&1 | grep 'Free Software Foundation', \
 	patch --version 2>&1 | grep 'Free Software Foundation'))
 
-$(eval $(call SetupHostCommand,diff,Please install diffutils, \
-	gdiff --version 2>&1 | grep diff, \
-	diff --version 2>&1 | grep diff))
+$(eval $(call SetupHostCommand,diff,Please install GNU diffutils, \
+	gdiff --version 2>&1 | grep GNU, \
+	diff --version 2>&1 | grep GNU))
 
 $(eval $(call SetupHostCommand,cp,Please install GNU fileutils, \
 	gcp --help 2>&1 | grep 'Copy SOURCE', \
@@ -136,26 +147,28 @@ $(eval $(call SetupHostCommand,bzip2,Please install 'bzip2', \
 $(eval $(call SetupHostCommand,wget,Please install GNU 'wget', \
 	wget --version | grep GNU))
 
+$(eval $(call SetupHostCommand,install,Please install GNU 'install', \
+	install --version | grep GNU, \
+	ginstall --version | grep GNU))
+
 $(eval $(call SetupHostCommand,perl,Please install Perl 5.x, \
 	perl --version | grep "perl.*v5"))
 
 $(eval $(call CleanupPython2))
 
-$(eval $(call SetupHostCommand,python,Please install Python >= 3.5, \
+$(eval $(call SetupHostCommand,python,Please install Python >= 3.6, \
 	python3.9 -V 2>&1 | grep 'Python 3', \
 	python3.8 -V 2>&1 | grep 'Python 3', \
 	python3.7 -V 2>&1 | grep 'Python 3', \
 	python3.6 -V 2>&1 | grep 'Python 3', \
-	python3.5 -V 2>&1 | grep 'Python 3', \
-	python3 -V 2>&1 | grep -E 'Python 3\.[5-9]\.?'))
+	python3 -V 2>&1 | grep -E 'Python 3\.[6-9]\.?'))
 
-$(eval $(call SetupHostCommand,python3,Please install Python >= 3.5, \
+$(eval $(call SetupHostCommand,python3,Please install Python >= 3.6, \
 	python3.9 -V 2>&1 | grep 'Python 3', \
 	python3.8 -V 2>&1 | grep 'Python 3', \
 	python3.7 -V 2>&1 | grep 'Python 3', \
 	python3.6 -V 2>&1 | grep 'Python 3', \
-	python3.5 -V 2>&1 | grep 'Python 3', \
-	python3 -V 2>&1 | grep -E 'Python 3\.[5-9]\.?'))
+	python3 -V 2>&1 | grep -E 'Python 3\.[6-9]\.?'))
 
 $(eval $(call SetupHostCommand,git,Please install Git (git-core) >= 1.7.12.2, \
 	git --exec-path | xargs -I % -- grep -q -- --recursive %/git-submodule))
@@ -165,6 +178,9 @@ $(eval $(call SetupHostCommand,file,Please install the 'file' package, \
 
 $(eval $(call SetupHostCommand,rsync,Please install 'rsync', \
 	rsync --version </dev/null))
+
+$(eval $(call SetupHostCommand,which,Please install 'which', \
+	which which | grep which))
 
 $(STAGING_DIR_HOST)/bin/mkhash: $(SCRIPT_DIR)/mkhash.c
 	mkdir -p $(dir $@)
