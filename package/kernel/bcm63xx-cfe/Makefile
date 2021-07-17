@@ -6,9 +6,9 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=https://github.com/openwrt/bcm63xx-cfe.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2020-12-27
-PKG_SOURCE_VERSION:=c0b36917ea565c4ffac2e723f77c9d27d0691c33
-PKG_MIRROR_HASH:=75262534b1fbeba2299621ec3112d9d22b3e3de4cb73e8d7cac1e0b7e5eece77
+PKG_SOURCE_DATE:=2021-06-22
+PKG_SOURCE_VERSION:=e5050f37150b34deb547b50feccd0e7439cb5bd7
+PKG_MIRROR_HASH:=85fed9f4bdf23cf7d33a02f549ffe9073666890f786d5ffa484c0368552b75ae
 
 PKG_FLAGS:=nonshared
 
@@ -17,7 +17,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/bcm63xx-cfe
   SECTION:=boot
   CATEGORY:=Boot Loaders
-  DEPENDS:=@(TARGET_bcm4908||TARGET_bcm63xx)
+  DEPENDS:=@(TARGET_bcm4908||TARGET_bcm63xx||TARGET_bmips)
   TITLE:=bcm63xx-cfe
   DEFAULT:=y
 endef

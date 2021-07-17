@@ -48,20 +48,30 @@ define Device/ubnt_edgerouter
   DEVICE_MODEL := EdgeRouter
   BOARD_NAME := er
   CMDLINE := $(ER_CMDLINE)
-  DEFAULT := n
 endef
 TARGET_DEVICES += ubnt_edgerouter
 
-define Device/ubnt_edgerouter-4
+define Device/ubnt_edgerouter-e300
   DEVICE_VENDOR := Ubiquiti
-  DEVICE_MODEL := EdgeRouter 4
-  DEVICE_DTS := cn7130_ubnt_edgerouter-4
   DEVICE_PACKAGES += kmod-gpio-button-hotplug kmod-leds-gpio kmod-of-mdio kmod-sfp kmod-usb3 kmod-usb-dwc3 kmod-usb-storage-uas
   KERNEL := kernel-bin | patch-cmdline | append-dtb-to-elf
   KERNEL_DEPENDS := $$(wildcard $(DTS_DIR)/$(DEVICE_DTS).dts)
   CMDLINE := root=/dev/mmcblk0p2 rootfstype=squashfs,ext4 rootwait
 endef
+
+define Device/ubnt_edgerouter-4
+  $(Device/ubnt_edgerouter-e300)
+  DEVICE_MODEL := EdgeRouter 4
+  DEVICE_DTS := cn7130_ubnt_edgerouter-4
+endef
 TARGET_DEVICES += ubnt_edgerouter-4
+
+define Device/ubnt_edgerouter-6p
+  $(Device/ubnt_edgerouter-e300)
+  DEVICE_MODEL := EdgeRouter 6P
+  DEVICE_DTS := cn7130_ubnt_edgerouter-6p
+endef
+TARGET_DEVICES += ubnt_edgerouter-6p
 
 ERLITE_CMDLINE:=-mtdparts=phys_mapped_flash:512k(boot0)ro,512k(boot1)ro,64k(eeprom)ro root=/dev/sda2 rootfstype=squashfs,ext4 rootwait
 define Device/ubnt_edgerouter-lite
