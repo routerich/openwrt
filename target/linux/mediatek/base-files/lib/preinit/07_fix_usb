@@ -1,0 +1,12 @@
+preinit_fix_usb() {
+	case $(board_name) in
+	routerich,ax3000)
+		usb3_path="/sys/bus/usb/devices/usb2/authorized"
+		[ -e $usb3_path ] && echo 0 > $usb3_path
+		;;
+	*)
+		;;
+	esac
+}
+
+boot_hook_add preinit_main preinit_fix_usb

@@ -23,7 +23,8 @@ mediatek_setup_interfaces()
 	bananapi,bpi-r3)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4 sfp2" "eth1 wan"
 		;;
-	cudy,wr3000-v1)
+	cudy,wr3000-v1|\
+	routerich,ax3000)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3" "wan"
 		;;
 	glinet,gl-mt3000)
